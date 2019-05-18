@@ -13,6 +13,11 @@ The solution to this problem is rather easy, and it consists in simply keeping a
 The other problem is a typical **sliding window problem**, which can usually be solved in _O(n)_ by using a Queue.
 This task combines both these problems, which means that the **running average** will have to decrease eventually, which is a tiny variation on the usual algorithm.
 
+A proper parallel solution to this task is not really possible unless we can load all the data into memory first and then partition the data into different windows.
+As this is not the case, seen that we're working with a stream of data, I have opted to solve this in Python.
+Python does have a speed problem and its best uses are in I/O-bound programs, and seen that the solution I went for is built around streams, Python sounds like a good decision.
+Not to mention that it will probably be easier to read than other languages! 😄
+
 A _Complexity Analysis_ of this solution is also provided below.
 
 ### Key Ideas
@@ -26,8 +31,22 @@ This way, the program can be used in statistics pipelines, composed with with ot
 It will, in no way shape or form, stop this pipeline to process data, as it will process and output data as soon as possible.
 
 ### Architecture
- TODO
+This solution has two main components:
+  - The `metrics_cli.py` script;
+  - The `metrics` module;
 
+The `metrics_cli.py` script provides a "_front-end_" to use this tool, namely by parsing arguments and interacting with the user and the `metrics` module that is _underneath_.
+
+The `metrics` module is where the interesting things happen, and the calculation of statistics is done.
+As of right now, it only contains running average functionality, but it could easily be extended to provide other features.
+The running average implementation in this module just needs to know about a JSON object stream (which is being created in `metrics_cli.py`, using the `jsonlines` module on the input file), and the window size.
+With this, it will filter events to find `translation_delivered` events, and only process those.
+
+Seen that this implementation just deals with a JSON object stream, it would be trivial to do statistics for individual clients for example!
+One would need only to provide the implementation with a filtered stream, just like its being done in `running_average.py` by using Python's `filter` function.
+
+Another important thing to mention is that I have choosen not to use an object oriented architecture, focusing more on streams and the functional design.
+As much as I like OOP, I believe that solving this problem in an object oriented fashion would introduce a degree of complexity that is not needed for this application, and would like to keep it simple.
 
 ## Installing and Running
 ### Prerequisites
@@ -74,3 +93,16 @@ For example, if you pass `--window_size 10`, only translations that occurred in 
 
 ## Complexity Analysis
  TODO
+
+
+## Assumptions and Notes
+### Assumptions
+For this solution, I am assuming the following:
+  - When `window_size` is passed to the program, it is an integer representing the window size in minutes;
+  - Translations arrive at the input stream with chronologically ordered timestamps;
+  - The input stream contains valid JSON objects, if it is malformed the application's behavior is unspecified;
+  - The input stream can contain a lot of data, eventually an ammount of data that would not fit in a computer's memory;
+  - The input is being fed as a real-time stream, which can eventually halt until new events are delivered;
+  - The value of `window_size` must be greater or equal than 1;
+  - The window for the calculation of the moving average only cares about the timestamp of the `translation_delivered` event, and not its duration;
+
