@@ -44,7 +44,7 @@ def running_average(json_stream, window_size):
     """
     # we'll be running the elements in the current window through a deque, and count their average
     deq = deque()
-    deq_avg = 0.0
+    deq_avg = 0
     window_ts = None  # we also keep a timestamp for the end of the current window
 
     # filter our stream of data, as we only care about 'translation_delivered' events
@@ -72,7 +72,12 @@ def running_average(json_stream, window_size):
                 # but remove elements older than window_size minutes first
                 while deq and parse_timestamp_into_datetime(deq[0]['timestamp']) < (window_ts - datetime.timedelta(minutes=window_size)):
                     evt = deq.popleft()
-                    deq_avg -= (evt['duration'] - deq_avg)/len(deq)
+
+                    # lookout when removing the last event from the deque
+                    if deq:
+                        deq_avg -= (evt['duration'] - deq_avg)/len(deq)
+                    else:
+                        deq_avg = 0
 
                 print_running_average_json(window_ts, deq_avg)
                 window_ts += datetime.timedelta(minutes=1)
@@ -81,4 +86,4 @@ def running_average(json_stream, window_size):
         deq.append(del_evt)
         deq_avg += (del_evt['duration'] - deq_avg)/len(deq)
 
-    print_running_average_json(window_ts, deq_avg)  # just show a 0 average
+    print_running_average_json(window_ts, deq_avg)
