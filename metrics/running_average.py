@@ -69,8 +69,7 @@ def running_average(json_stream, window_size):
                 print_running_average_json(window_ts, deq_avg)  # and print the average along the way
 
                 # Remove elements older than window_size minutes
-                oldest_deq_ts = parse_timestamp_into_datetime(deq[0]['timestamp'])
-                while deq and oldest_deq_ts < (window_ts - datetime.timedelta(minutes=window_size)):
+                while deq and parse_timestamp_into_datetime(deq[0]['timestamp']) < (window_ts - datetime.timedelta(minutes=window_size)):
                     evt = deq.popleft()
                     deq_avg -= (evt['duration'] - deq_avg)/len(deq)
 
