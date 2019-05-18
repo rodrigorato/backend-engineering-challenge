@@ -10,11 +10,11 @@ def valid_input_file(f):
     In case '-' is passed, will use stdin.
     """
 
-    if not (os.path.isfile(f) and os.access(f, os.R_OK)):  # a valid input file is a file that exists and is readable
-        raise argparse.ArgumentTypeError("Cannot access this file! Are you sure it exists and you have read permission?")
+    if f == '-':
+        return sys.stdin
     else:
-        if f == '-':
-            return sys.stdin
+        if not (os.path.isfile(f) and os.access(f, os.R_OK)):  # a valid input file is a file that exists and is readable
+            raise argparse.ArgumentTypeError("Cannot access this file! Are you sure it exists and you have read permission?")
         else:
             return open(f)
 
