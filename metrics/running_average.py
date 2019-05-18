@@ -63,16 +63,18 @@ def running_average(json_stream, window_size):
             first = False
             print_running_average_json(window_ts, deq_avg)  # just show a 0 average
 
+            window_ts += datetime.timedelta(minutes=1)
+
         else:
             # advance our window minute by minute until the event is in the window
             while window_ts < del_ts:
-                print_running_average_json(window_ts, deq_avg)  # and print the average along the way
 
-                # Remove elements older than window_size minutes
+                # but remove elements older than window_size minutes first
                 while deq and parse_timestamp_into_datetime(deq[0]['timestamp']) < (window_ts - datetime.timedelta(minutes=window_size)):
                     evt = deq.popleft()
                     deq_avg -= (evt['duration'] - deq_avg)/len(deq)
 
+                print_running_average_json(window_ts, deq_avg)
                 window_ts += datetime.timedelta(minutes=1)
 
         # Add the new event and add it to the average
