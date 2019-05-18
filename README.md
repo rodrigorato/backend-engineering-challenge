@@ -42,7 +42,7 @@ pip3 install -r requirements.txt
 Once you do this, you're all good to run the code! :)
 
 ### Running the Project
-If you're running this in a Unix/Linux system, where you have a `/usr/bin/env` that knows about `python3.6`, you can just set the `metrics_cli.py` script as executable and run it, like so:
+If you're running this in a Unix/Linux system, where you have a `/usr/bin/env` that knows about `python3.7`, you can just set the `metrics_cli.py` script as executable and run it, like so:
 ```bash
 chmod u+x metrics_cli.py
 ./metrics_cli.py <arguments>
