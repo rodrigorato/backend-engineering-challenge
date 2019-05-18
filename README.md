@@ -58,14 +58,14 @@ You can check what are the valid arguments by running the program with no argume
 In any case, both the `--input_file` and `--window_size` arguments specified in the [original challenge description](CHALL.md) are required.
 
 ### Usage
-The CLI application has two arguments that are mandatory-
+The CLI application has two arguments that are mandatory.
 #### input\_file
 The `--input_file` is an argument that tells the program where to get a stream of JSON object from.
 This stream is what will be used and processed in order to produce the running average of the translations' durations.
 
 There are two types of arguments you can pass here, you can specify a path to a valid file (like `./path/to/events.json`), or you can pass a special value, `-`, that tells the program to read from its standard input (much like standard Unix utilities, such as `cat`).
 
-Nonetheless, the program will read from that stream until it ends/finds an `EOF`.
+Nonetheless, the program will read from that stream until it ends/finds `EOF`.
 
 #### window\_size
 The `--window_size` argument represents how many minutes the program will use a translation for a running average.
