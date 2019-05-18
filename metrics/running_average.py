@@ -44,7 +44,7 @@ def running_average(json_stream, window_size):
     """
     # we'll be running the elements in the current window through a deque, and count their average
     deq = deque()
-    deq_avg = 0
+    deq_avg = 0.0
     window_ts = None  # we also keep a timestamp for the end of the current window
 
     # filter our stream of data, as we only care about 'translation_delivered' events
