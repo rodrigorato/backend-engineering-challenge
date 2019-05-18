@@ -92,6 +92,9 @@ For example, if you pass `--window_size 10`, only translations that occurred in 
 
 
 ## Complexity Analysis
+![Time vs Input size](static/time_runs.png)
+
+Talk about list vs deque O(n) vs O(1)
  TODO
 
 
