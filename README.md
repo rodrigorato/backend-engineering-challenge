@@ -105,7 +105,7 @@ So what is being done is, for every element in the stream (_O(n)_), we go throug
 If we reason about the number of minutes that we go through, it surely has a maximum as it depends on how far apart the `translation_delivered` events are arriving at our program.
 And then, at each minute, we are looking at the elements stored in our deque and removing the ones that are out of the current time window.
 Lets call the maximum number of minutes between a `translation_delivered` event _m_, and call the most elements we can get in the deque that don't belong to a given time window _e_.
-In reality, the time complexity for this algorithm is then _O(n*m*e)_, which makes it linear.
+In reality, the time complexity for this algorithm is then _O(n\*m\*e)_, which makes it linear.
 
 Here is a graph depicting multiple runs of the tool, divided in two categories:
   - The lines with the bigger slope represent runs where the `translation_delivered` events are sparse, or really far apart;
