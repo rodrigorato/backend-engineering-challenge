@@ -92,10 +92,36 @@ For example, if you pass `--window_size 10`, only translations that occurred in 
 
 
 ## Complexity Analysis
+I decided to develop some small tools (just two scripts) to empirically analyse the complexity of my solution.
+These tools are just a Python script to generate inputs for the program, and a Bash script that uses GNU Time to calculate how much time thep rogram takes to run and how much memory does it use at its peak.
+These tools are under the `complexity_analysis` folder should you want to take a look at them.
+
+### Time
+When it comes to how much time my solution takes to run, we can first look at the algorithm and try to understand what will happen.
+The approach starts by going through all the incoming events and storing them in a deque, and then for each of them it advances the current time minute by minute (because we have to show stats for every minute), deleting elements that are older than the current window from the deque.
+A deque was chosen, as opposed to a list, due to it being much faster at adding and removing elements at its ends.
+
+So what is being done is, for every element in the stream (_O(n)_), we go through the minutes until we reach the next element.
+If we reason about the number of minutes that we go through, it surely has a maximum as it depends on how far apart the `translation_delivered` events are arriving at our program.
+And then, at each minute, we are looking at the elements stored in our deque and removing the ones that are out of the current time window.
+Lets call the maximum number of minutes between a `translation_delivered` event _m_, and call the most elements we can get in the deque that don't belong to a given time window _e_.
+In reality, the time complexity for this algorithm is then _O(n*m*e)_, which makes it linear.
+
+Here is a graph depicting multiple runs of the tool, divided in two categories:
+  - The lines with the bigger slope represent runs where the `translation_delivered` events are sparse, or really far apart;
+  - The lines with the smaller slope represent runs where these events are happening quite faster than in the first;
+
 ![Time vs Input size](static/time_runs.png)
 
-Talk about list vs deque O(n) vs O(1)
- TODO
+We can see that when the events are delivered quickly, the program is able to process it quite fast, as opposed to when they are delivered apart from each other, where the program will have to fill in the gaps.
+In any case, we can empirically prove that the time complexity for this algorithm is linear (and it depends mostly on _m_).
+
+### Space
+At any given point in time, we are only storing the elements that are relevant to the current window, which is a really small number when compared to _n_.
+Evidence shows that this solution is approximately constant when it comes to memory usage.
+
+### Small Notw
+Should you not believe any of the practical data that is shown here, you are free to alter the parameters for the scripts in the `complexity_analysis` folder and run `do_analysis.sh`, which will produce a tab-separated values (TSV) file, where you can perform analysis on in order to make your own conclusions (and eventually prove that mine aren't all that right).
 
 
 ## Assumptions and Notes
@@ -108,4 +134,5 @@ For this solution, I am assuming the following:
   - The input is being fed as a real-time stream, which can eventually halt until new events are delivered;
   - The value of `window_size` must be greater or equal than 1;
   - The window for the calculation of the moving average only cares about the timestamp of the `translation_delivered` event, and not its duration;
+
 
